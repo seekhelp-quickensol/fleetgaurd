@@ -4758,8 +4758,14 @@ class Admin_model extends CI_model
 				'work_order_id'			=>	$work_order_id,
 				'work_order_item_id'	=>	$work_order_item_id
 			);
-			$this->db->where('id', $shortage_item->id);
-			$this->db->update('tbl_bpr_mto_shortage_report', $parent_data);
+			if($item['report_type'] == 'MTO'){
+				$this->db->where('id', $shortage_item->id);
+				$this->db->update('tbl_bpr_mto_shortage_report', $parent_data);
+			}else if($item['report_type'] == 'MTS'){
+				$this->db->where('id', $shortage_item->id);
+				$this->db->update('tbl_bpr_mts_shortage_report', $parent_data);
+			}
+			
 
 			return '1';
 		} else {
@@ -5005,7 +5011,103 @@ class Admin_model extends CI_model
 			$this->db->limit($length, $start);
 		}
 
-		$result = $this->db->get('tbl_bpr_mto_shortage_report');
-		return $result->result();
+		$mto_result = $this->db->get('tbl_bpr_mto_shortage_report')->result();
+
+		if(!empty($mto_result)){
+			foreach($mto_result as $mto_results){
+				$mto_results->report_type = 'MTO';
+			}
+		}
+
+
+		$this->db->select('
+			tbl_bpr_mts_shortage_report.*, tbl_bpr_mts_shortage_report.ffpl_item_number as ff_part_no, tbl_bpr_mts_shortage_report.customer_item_number as customer_part_no,
+			tbl_report.report_number,
+			tbl_report.created_on as report_created_on,
+			tbl_item_management.item_no,
+			tbl_item_management.description as item_description,
+			tbl_work_order.work_order_no,
+			tbl_work_order.shift_id as wo_shift_id,
+			tbl_work_order_items.date as wo_date,
+			tbl_work_order_items.issue_qty as wo_issue_qty,
+			tbl_work_order_items.job_order_no as wo_job_order_no,
+			tbl_work_order_items.production_qty as wo_production_qty,
+			tbl_work_order_items.tag_qty as wo_tag_qty,
+			tbl_work_order_items.production_status as wo_production_status,
+			tbl_work_order_items.planner_remark as wo_planner_remark,
+			tbl_work_order_items.store_remark as wo_store_remark,
+			tbl_work_order_items.production_remark as wo_production_remark,
+			tbl_work_order_items.plan_qty as wo_plan_qty,
+			tbl_shift.name as shift_name,
+			tbl_shift.from as shift_from,
+			tbl_shift.to as shift_to,
+			tbl_part_master.cycle_time1, tbl_part_master.change_over_time1, tbl_part_master.line_name_hsg_id
+		');
+		$this->db->join('tbl_item_management', 'tbl_item_management.id = tbl_bpr_mts_shortage_report.ffpl_item_id');
+		$this->db->join('tbl_report', 'tbl_report.id = tbl_bpr_mts_shortage_report.report_id');
+		$this->db->join('tbl_work_order', 'tbl_work_order.id = tbl_bpr_mts_shortage_report.work_order_id', 'left');
+		$this->db->join('tbl_shift', 'tbl_shift.id = tbl_work_order.shift_id', 'left');
+		$this->db->join('tbl_work_order_items', 'tbl_work_order_items.id = tbl_bpr_mts_shortage_report.work_order_item_id', 'left');
+		$this->db->join('tbl_part_master', 'tbl_part_master.fg_id = tbl_bpr_mts_shortage_report.ffpl_item_id');
+
+		if ($this->input->post('filter_report') != "") {
+			$this->db->where('tbl_report.report_number', $this->input->post('filter_report'));
+		}
+		if ($this->input->post('filter_work_order') != "") {
+			$this->db->where('tbl_work_order.id', $this->input->post('filter_work_order'));
+		}
+		if ($this->input->post('filter_shift') != "") {
+			$this->db->where('tbl_work_order.shift_id', $this->input->post('filter_shift'));
+		}
+		if ($this->input->post('filter_date') != "") {
+			$this->db->where('tbl_work_order.date', date('Y-m-d', strtotime($this->input->post('filter_date'))));
+		}
+		if ($this->input->post('filter_line') != "") {
+		    $this->db->where('tbl_part_master.line_name_hsg_id', $this->input->post('filter_line'));
+		}
+		
+		$this->db->where('tbl_bpr_mts_shortage_report.plan_qty >', '0');
+
+		if ($search != "") {
+			$this->db->group_start();
+			$this->db->like('tbl_report.report_number', $search);
+			$this->db->or_like('tbl_report.created_on', $search);
+			$this->db->or_like('tbl_item_management.item_no', $search);
+			$this->db->or_like('tbl_item_management.description', $search);
+			$this->db->or_like('tbl_work_order.work_order_no', $search);
+			$this->db->or_like('tbl_work_order_items.date', $search);
+			$this->db->or_like('tbl_work_order_items.issue_qty', $search);
+			$this->db->or_like('tbl_work_order_items.job_order_no', $search);
+			$this->db->or_like('tbl_work_order_items.production_qty', $search);
+			$this->db->or_like('tbl_work_order_items.tag_qty', $search);
+			$this->db->or_like('tbl_work_order_items.production_status', $search);
+			$this->db->or_like('tbl_work_order_items.planner_remark', $search);
+			$this->db->or_like('tbl_work_order_items.store_remark', $search);
+			$this->db->or_like('tbl_work_order_items.production_remark', $search);
+			$this->db->or_like('tbl_shift.name', $search);
+			$this->db->or_like('tbl_shift.from', $search);
+			$this->db->or_like('tbl_shift.to', $search);
+			$this->db->group_end();
+		}
+
+		$this->db->where('tbl_report.is_deleted', '0');
+		$this->db->where('tbl_bpr_mts_shortage_report.is_deleted', '0');
+		$this->db->where('tbl_item_management.is_deleted', '0');
+		$this->db->group_by('tbl_bpr_mts_shortage_report.ffpl_item_id');
+		$this->db->order_by('tbl_bpr_mts_shortage_report.id', 'ASC');
+
+		if ($length != "" && $length > "0" && $start >= 0) {
+			$this->db->limit($length, $start);
+		}
+
+		$mts_result = $this->db->get('tbl_bpr_mts_shortage_report')->result();
+		if(!empty($mts_result)){
+			foreach($mts_result as $mts_results){
+				$mts_results->report_type = 'MTS';
+			}
+		}
+
+		return array_merge($mto_result, $mts_result);
+		
 	}
 }
