@@ -86,10 +86,15 @@ th {
 
 input {
     width: 100%;
-    padding: 4px;
     box-sizing: border-box;
     border: 1px solid #bbb;
     border-radius: 4px;
+    padding: 4px;
+    text-align: center;
+}
+input[readonly]{
+    padding: 4px;
+    text-align: center;
 }
 
 .table-data {
@@ -218,70 +223,63 @@ input {
                     <!-- counters -->
                     <!-- KPI Cards Section -->
                     <?php if(isset($_GET['filter_shift'])){?>
-                    <div class="kpi-container">
-                        <!-- First row of counters -->
-                        <div class="kpi-row">
-                            <div class="kpi-card c-1">
-                                 <p id="production_target_total">0</p>
-                                <h4>Production Target</h4>
-                               
-                            </div>
-                            <div class="kpi-card c-2">
-                                  <p id="production_total">0</p>
-                                <h4>Actual Production</h4>
-                              
-                            </div>
-                            <div class="kpi-card c-9 ">
-                                <p id="line_oee_percentage">0%</p>
-                                <h4>Line OEE Against Cycle Time </h4>
+                        <div class="kpi-container">
+                            <!-- First row of counters -->
+                            <div class="kpi-row">
+                                <div class="kpi-card c-1">
+                                    <p id="production_target_total">0</p>
+                                    <h4>Production Target</h4>
                                 
-                            </div>
-                            <div class="kpi-card c-9 ">
-                                 <p id="plan_vs_actual_percentage">0%</p>
-                                <h4>Plan vs Actual Production </h4>
-                               
-                            </div>
-                            <div class="kpi-card c-9 ">
-                                <p id="material_issue_vs_actual_percentage">0%</p>
-                                <h4>Material Issue Vs Actual Production </h4>
+                                </div>
+                                <div class="kpi-card c-2">
+                                    <p id="production_total">0</p>
+                                    <h4>Actual Production</h4>
                                 
-                            </div>
+                                </div>
+                                <div class="kpi-card c-9 ">
+                                    <p id="line_oee_percentage">0%</p>
+                                    <h4>Line OEE Against Cycle Time </h4>
+                                    
+                                </div>
+                                <div class="kpi-card c-9 ">
+                                    <p id="plan_vs_actual_percentage">0%</p>
+                                    <h4>Plan vs Actual Production </h4>
+                                
+                                </div>
+                                <div class="kpi-card c-9 ">
+                                    <p id="material_issue_vs_actual_percentage">0%</p>
+                                    <h4>Material Issue Vs Actual Production </h4>
+                                    
+                                </div>
 
 
-                             <div class="kpi-card c-6">
-                                 <p id="total_production_time">0</p>
-                                <h4>Total Production Time <br> (In Min.)</h4>
-                               
-                            </div>
-                            <div class="kpi-card c-7">
-                                     <p id="required_time_full_kit_qty">0</p>
-                                <h4>Required Time for Full Kit Qty <br> (In Min.)</h4>
-                           
-                            </div>
-                            <div class="kpi-card c-8">
-                                 <p id="required_time_plan_qty">0</p>
-                                <h4>Required Time for Plan Qty <br>(In Min.)</h4>
-                               
-                            </div>
-                            <div class="kpi-card c-9">
-                                 <p id="total_production_time_consumed">0</p>
-                                <h4>Total Time Consuming  Production (In Min.)</h4>
-                               
-                            </div>
-                            <div class="kpi-card c-10">
-                                    <p id="balance_time">0</p>
-                                <h4>Balance Time <br>(In Min.)</h4>
-                            
-                            </div>
-                            <div class="kpi-card c-11">
-                                <p id="extra_time">0</p>
-                                <h4>Extra Time (In Min.)</h4>
+                                <div class="kpi-card c-6">
+                                    <p id="total_production_time">0</p>
+                                    <h4>Total Production Time <br> (In Min.)</h4>
                                 
+                                </div>
+                                <div class="kpi-card c-7">
+                                        <p id="required_time_full_kit_qty">0</p>
+                                    <h4>Required Time for Full Kit Qty <br> (In Min.)</h4>
+                                </div>
+                                <div class="kpi-card c-8">
+                                    <p id="required_time_plan_qty">0</p>
+                                    <h4>Required Time for Plan Qty <br>(In Min.)</h4>
+                                </div>
+                                <div class="kpi-card c-9">
+                                    <p id="total_production_time_consumed">0</p>
+                                    <h4>Total Time Consuming  Production (In Min.)</h4>
+                                </div>
+                                <div class="kpi-card c-10">
+                                        <p id="balance_time">0</p>
+                                    <h4>Balance Time <br>(In Min.)</h4>
+                                </div>
+                                <div class="kpi-card c-11">
+                                    <p id="extra_time">0</p>
+                                    <h4>Extra Time (In Min.)</h4>
+                                </div>
                             </div>
-
                         </div>
-                        
-                    </div>
                     <?php }?>
                     <!-- Your existing table will come below this -->
                     <!-- table -->
@@ -296,16 +294,16 @@ input {
                                     <th>Part Number</th>
                                     <th>Customer Item Number</th>
                                     <th>Cycle Time (Sec)</th>
-                                    <th>Changeover Time (Sec)</th>
+                                    <th>Change over Time (Sec)</th>
                                     <th>Gap Qty</th>
                                     <th>Full Kit Qty</th>
                                     <th>Plan Qty</th>
                                     <th>Material Issue Qty</th>
                                     <th>Job Order No</th>
                                     <th>Production Qty</th>
-                                    <th>Tag Qty</th>
-                                    <!-- <th>Date</th>
-                                    <th>Assign Shift</th> -->
+                                    <th>ATag Qty</th>
+                                    <th>Date</th>
+                                    <th>Assign Shift</th>
                                     <th>Production Status</th>
                                     <th>Planner Remark</th>
                                     <th>Store Remark</th>
@@ -328,8 +326,8 @@ input {
                                     <th>0</th>
                                     <th>0</th>
                                     <th></th>
-                                    <!-- <th></th>
-                                    <th></th> -->
+                                    <th></th>
+                                    <th></th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -552,7 +550,7 @@ function loadTable() {
             // Time-based KPIs
             const requiredTimeMinutes = totalRequiredFullKitTimeSeconds / 60;
             $('#required_time_full_kit_qty').text(requiredTimeMinutes.toFixed(0));
-            $(api.column(6).footer()).html(requiredTimeMinutes.toFixed(0));
+            $(api.column(6).footer()).html('');
 
             const requiredTimePlanMinutes = totalRequiredPlanTimeSeconds / 60;
             $('#required_time_plan_qty').text(requiredTimePlanMinutes.toFixed(0));
@@ -633,8 +631,9 @@ $(document).on('click', '.submit', function() {
         store_remark: $row.find('input[id^="store_remark_"]').val(),
         production_remark: $row.find('input[id^="production_remark_"]').val(),
         plan_qty: $row.find('input[id^="plan_qty_"]').val(),
+        report_type: $row.find('input[id^="report_type_"]').val(),
     };
-
+    console.log('item',item);
     $.ajax({
         url: "<?= base_url('admin/Ajax_controller/set_work_order_ajax'); ?>",
         type: "POST",

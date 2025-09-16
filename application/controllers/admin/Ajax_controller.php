@@ -1317,19 +1317,15 @@ class Ajax_controller extends CI_Controller
         $options = '';
         if (!empty($shifts)) {
           foreach ($shifts as $row) {
-            $options .= '<option value="' . $row->id . '"' . ($print->work_order_no != "" && $print->wo_shift_id == $row->id ? 'selected' : '') . '>' . $row->name . ' (' . date('h:i A', strtotime($row->from)) . ' to ' . date('h:i A', strtotime($row->to)) . ')</option>';
+            // $options .= '<option value="' . $row->id . '"' . ($print->work_order_no != "" && $print->wo_shift_id == $row->id ? 'selected' : '') . '>' . $row->name . ' (' . date('h:i A', strtotime($row->from)) . ' to ' . date('h:i A', strtotime($row->to)) . ')</option>';
+            $options .= '<option value="' . $row->id . '"' . ($print->work_order_no != "" && $print->wo_shift_id == $row->id ? 'selected' : '') . '>' . $row->name . '</option>';
           }
         }
-
-
-        
-
-       
 
           $sub_array = array();
           $sub_array[] = $offset++ . '<input type="checkbox" class="select_row">';
           $sub_array[] = $print->work_order_no ?? '-';
-          $sub_array[] = $print->report_type ?? '-';
+          $sub_array[] = $print->report_type.'<input class="form-control" type="hidden" id="report_type_' . $print->id . '" value="' . $print->report_type . '" readonly>' ?? '-';
           $sub_array[] = $print->priority_mark ?? '-';
           $sub_array[] = $print->ff_part_no ?? '-';
           $sub_array[] = $print->customer_part_no ?? '-';
@@ -1349,11 +1345,12 @@ class Ajax_controller extends CI_Controller
           $sub_array[] = '<input class="form-control" type="text" id="order_no_' . $print->id . '' . ($print->work_order_no != "" ? $print->wo_job_order_no : '') . '" disabled>';
           $sub_array[] = '<input class="form-control" type="number" id="production_qty_' . $print->id . ' value="' . ($print->work_order_no != "" ? $print->wo_production_qty : '') . '" disabled>';
           $sub_array[] = '<input class="form-control" type="number" id="tag_qty_' . $print->id . '' . ($print->work_order_no != "" ? $print->wo_tag_qty : '') . '" disabled>';
-          // $sub_array[] = '<input autocomplete="off" type="text" class="form-control singledatepickers" id="filter_date_' . $print->id . '" value="' . ($print->wo_date != "" ? date('d-m-Y', strtotime($print->wo_date)) : '') . '" placeholder="Select Date" disabled>';
-          // $sub_array[] = '<select class="form-control js-example-basic-single" id="selected_shift_' . $print->id . '" style="width:100%" disabled>
-          //                           <option value="">Select Shift</option>
-          //                           ' . $options . '
-          //                         </select>';
+          
+          $sub_array[] = '<input autocomplete="off" type="text" class="form-control singledatepickers" id="filter_date_' . $print->id . '" value="' . ($print->wo_date != "" ? date('d-m-Y', strtotime($print->wo_date)) : '') . '" placeholder="Select Date" disabled style="width: 90px;">';
+          $sub_array[] = '<select class="form-control js-example-basic-single" id="selected_shift_' . $print->id . '" style="width:100px" disabled>
+                                    <option value="">Select Shift</option>
+                                    ' . $options . '
+                                  </select>';
           $sub_array[] = '<select class="form-control js-example-basic-single" id="production_status_' . $print->id . '" style="width:100%" disabled>
                                     <option value="">Production</option>
                                     <option value="Pending" ' . ($print->work_order_no != "" && $print->wo_production_status == "Pending" ? 'selected' : '') . '>Pending</option>
