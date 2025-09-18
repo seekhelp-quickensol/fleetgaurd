@@ -160,6 +160,7 @@ $route['bpr-mto-shortage-report/(:any)/(:any)'] = "admin/Admin_controller/bpr_mt
 
 $route['bpr-shortage-summary-report/(:any)'] = "admin/Admin_controller/bpr_shortage_summary_report/$1";
 $route['bpr-shortage-summary-report/(:any)/(:any)'] = "admin/Admin_controller/bpr_shortage_summary_report/$1";
+$route['export-bpr-shortage-summary-report/(:any)'] = "admin/Admin_controller/export_bpr_shortage_summary_report/$1";
 
 $route['export_bpr_mto_shortage_report/(:any)'] = "admin/Admin_controller/export_bpr_mto_shortage_report/$1";
 

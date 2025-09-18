@@ -2262,5 +2262,113 @@ class Admin_controller extends CI_Controller
 		$this->load->view('admin/shortage_summary_report', $data);
 	}
 
+	public function export_bpr_shortage_summary_report($report_number = null)
+	{
+		$report_number = $report_number ?: $this->uri->segment(2);
+
+		if (!$report_number) {
+			show_error('Report number is required.', 400);
+		}
+
+		$report_data = $this->Admin_model->get_generated_shortage_summary_data_paginated($report_number, 0, PHP_INT_MAX);
+
+		if (empty($report_data)) {
+			show_error('No data available to export.', 404);
+		}
+
+		// Use PhpSpreadsheet directly
+		$spreadsheet = new Spreadsheet();
+
+		// Set document properties
+		$spreadsheet->getProperties()
+			->setCreator("Fleet Gaurd")
+			->setLastModifiedBy("Fleet Gaurd")
+			->setTitle("BPR Shortage Summary Report")
+			->setSubject("BPR Shortage Summary Report")
+			->setDescription("Exported BPR Shortage Summary Report data");
+
+		// First Sheet: Shortage Report
+		$sheet1 = $spreadsheet->setActiveSheetIndex(0);
+		$sheet1->setTitle('Shortage Report');
+
+		$headers = [
+			'SR NO',
+			'Type Of BPR trigger',
+			'Shortage Parts',
+			'Description',
+			'Sum of Short Qty',
+			'Req for how many FG Partrs',
+			'Req for how many FG Partrs (COUNT)',
+			'Supplier Name 1',
+			'Trigger for Supplier 1',
+			'Supplier Name 2',
+			'Trigger for Supplier 2',
+			'Supplier Name 3',
+			'Trigger for Supplier 3',
+			'Total Trigger QTY'
+		];
+
+		$col = 'A';
+		foreach ($headers as $header) {
+			$sheet1->setCellValue($col . '1', $header);
+			$col++;
+		}
+
+		$row = 2;
+		$sr_no = 1;
+		foreach ($report_data as $report_result) {
+			$item_supplier_one_data = $this->Admin_model->get_item_supplier_one_data($report_result->report_id, $report_result->material_code);
+			$item_supplier_two_data = $this->Admin_model->get_item_supplier_two_data($report_result->report_id, $report_result->material_code);
+			$item_supplier_three_data = $this->Admin_model->get_item_supplier_three_data($report_result->report_id, $report_result->material_code);
+			$shortage_fg = $this->Admin_model->get_for_shortage_fg_details($report_result->report_id, $report_result->material_code, $report_result->report_type);
+
+			// Prepare the FG parts string
+			$fg_parts = '';
+			if (!empty($shortage_fg)) {
+				$fg_items = array_map(function($fg) { return $fg->ffpl_item_number; }, $shortage_fg);
+				$fg_parts = implode(', ', $fg_items);
+			}
+
+			// Prepare supplier data
+			$supplier_one_name = !empty($item_supplier_one_data) ? $item_supplier_one_data->supplier_name : '-';
+			$supplier_one_trigger = !empty($item_supplier_one_data) ? $item_supplier_one_data->trigger : '-';
+			$supplier_two_name = !empty($item_supplier_two_data) ? $item_supplier_two_data->supplier_name : '-';
+			$supplier_two_trigger = !empty($item_supplier_two_data) ? $item_supplier_two_data->trigger : '-';
+			$supplier_three_name = !empty($item_supplier_three_data) ? $item_supplier_three_data->supplier_name : '-';
+			$supplier_three_trigger = !empty($item_supplier_three_data) ? $item_supplier_three_data->trigger : '-';
+
+			// Set cell values
+			$sheet1->setCellValue('A' . $row, $sr_no++);
+			$sheet1->setCellValue('B' . $row, $report_result->report_type);
+			$sheet1->setCellValue('C' . $row, $report_result->item_no);
+			$sheet1->setCellValue('D' . $row, $report_result->item_description);
+			$sheet1->setCellValue('E' . $row, $report_result->total_short_quantity);
+			$sheet1->setCellValue('F' . $row, $fg_parts);
+			$sheet1->setCellValue('G' . $row, count($shortage_fg));
+			$sheet1->setCellValue('H' . $row, $supplier_one_name);
+			$sheet1->setCellValue('I' . $row, $supplier_one_trigger);
+			$sheet1->setCellValue('J' . $row, $supplier_two_name);
+			$sheet1->setCellValue('K' . $row, $supplier_two_trigger);
+			$sheet1->setCellValue('L' . $row, $supplier_three_name);
+			$sheet1->setCellValue('M' . $row, $supplier_three_trigger);
+			$sheet1->setCellValue('N' . $row, ''); // Total Trigger QTY (unchanged, as it was empty in the original)
+			$row++;
+		}
+
+		// Auto-size columns for both sheets
+		foreach (range('A', 'AC') as $col) {
+			$sheet1->getColumnDimension($col)->setAutoSize(true);
+		}
+
+		// Set headers for Excel download
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		header('Content-Disposition: attachment;filename="BPR_Shortage_Summary_Report_' . $report_number . '_' . date('YmdHis') . '.xlsx"');
+		header('Cache-Control: max-age=0');
+
+		$writer = new Xlsx($spreadsheet);
+		$writer->save('php://output');
+		exit; // Remove redirect to prevent issues with output
+	}
+
 	/*=================== CLOSE AI =======================*/
 }
