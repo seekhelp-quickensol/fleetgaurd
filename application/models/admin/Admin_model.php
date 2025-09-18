@@ -3641,6 +3641,7 @@ class Admin_model extends CI_model
 					'order_quantity'            => $order->order_quantity,
 					'pending_order_quantity'    => $order->pending_order_quantity,
 					'plant_on_hand_quantity'    => $order->plant_on_hand_quantity,
+					'priority_mark'				=> $order->order_type,
 					'full_qty'                  => $full_qty,
 					'plan_qty'                  => $plan_qty,
 					'pending_qty_after_plan'    => $pending_quantity,

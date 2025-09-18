@@ -103,19 +103,10 @@ font-size:14px;
                 <h6 class="mb-3">Shortage Summary Report</h6>
                 <div class="list-data">
                 <div style="margin-bottom: 15px;">
-                    <a href="#" class="download-btns p-2 mb-2">
+                    <a href="<?= base_url('export-bpr-shortage-summary-report/' . $report_number); ?>" class="download-btns p-2 mb-2">
 						<i class="fas fa-download"></i>&nbsp;Download XLSX
 					</a>
-					<!-- <button class="download-btns p-2 mb-2" id="download-xlsx"> <i class="fas fa-download"></i>&nbsp;Download XLSX</button> -->
-							
-					<!-- <a href="<?= base_url('export_bpr_mto_shortage_report/' . $report_number); ?>" class="download-btns p-2 mb-2">
-						<i class="fas fa-download"></i>&nbsp;Download XLSX
-					</a>
-
-					<a href="<?= base_url('bpr-mts-shortage-report/' . $report_number.'/1'); ?>" class="download-btns p-2 mb-2">
-						View MTS Shortage Report
-					</a> -->
-
+					
 				</div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered">

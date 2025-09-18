@@ -29,6 +29,7 @@ font-size:14px;
 
                 <h6 class="mb-3">Trigger Report Review</h6>
                 <div class="list-data">
+					<!-- <button id="export-excel">Export to Excel</button> -->
                     <div class="">
                         <div class="manufacturer-tables mt-1 p-2"></div>
 
@@ -197,6 +198,20 @@ font-size:14px;
 					headerFilterPlaceholder: "Search By Percentage"
 				},
 			],
+		});
+		// jQuery event listener for Excel export
+		$("#export-excel").on("click", function() {
+			// Option 1: Export only the currently loaded page
+			table.download("xlsx", "trigger_report_data.xlsx", {
+				sheetName: "Trigger Report",
+				columnStyles: {
+					"buffer": { numFmt: "0.00%" }, // Format buffer as percentage
+					"release_qty": { numFmt: "0.00" }, // Format release_qty as number with 2 decimals
+					"asn_qty": { numFmt: "0.00" }, // Format asn_qty as number with 2 decimals
+					"difference": { numFmt: "0.00" }, // Format difference as number with 2 decimals
+					"percentage": { numFmt: "0.00%" } // Format percentage as percentage
+				}
+			});
 		});
     </script>
  <script>
